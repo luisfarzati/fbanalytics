@@ -11,8 +11,8 @@ public class FbStream {
 	@SuppressWarnings("deprecation")
 	public static void update() throws FbGraphException, ParseException {
 		JsonObject stream = FbGraph.getObject("me/home");
-//		JsonObject stream = FbGraph.getObject("me/home", play.modules.facebook.Parameter.with("limit", "25").and("until", "1299773070").parameters());
 		Date lastEntry = getLastEntry();
+		if(lastEntry == null) lastEntry = new GregorianCalendar(2011, 1, 1).getTime();
 
 		System.out.println("last: " + lastEntry.toString());
 
