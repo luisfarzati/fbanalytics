@@ -186,4 +186,4 @@ mail.smtp=mock
 module.fbgraph=${play.path}/modules/fbgraph-0.1
 
 fbg.appId=YOUR_FB_APP_ID
-fbg.appSecret=YOU_FB_APP_SECRET
+fbg.appSecret=YOUR_FB_APP_SECRET

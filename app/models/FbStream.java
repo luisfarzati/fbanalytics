@@ -12,7 +12,7 @@ public class FbStream {
 	public static void update() throws FbGraphException, ParseException {
 		JsonObject stream = FbGraph.getObject("me/home");
 //		JsonObject stream = FbGraph.getObject("me/home", play.modules.facebook.Parameter.with("limit", "25").and("until", "1299773070").parameters());
-		Long lastEntry = getLastEntry();
+		Date lastEntry = getLastEntry();
 
 		System.out.println("last: " + lastEntry.toString());
 
@@ -24,8 +24,8 @@ public class FbStream {
 				
 //				if(entry.has("application") && entry.get("application").isJsonObject()) {
 					FbStreamObject obj = new FbStreamObject(entry);
-					if(obj.fbId <= lastEntry) {
-						System.out.println("entry: " + new Long(obj.fbId).toString() + "; finishing");
+					if(obj.created.before(lastEntry)) {
+						System.out.println("entry: " + obj.created.toString() + " < " + lastEntry.toString() + "; finishing");
 						nextPageNeeded = false;
 						break;
 					}
@@ -46,9 +46,9 @@ public class FbStream {
 		System.out.println("finished");
 	}
 
-	private static long getLastEntry() {
-		Query query = JPA.em().createQuery("select MAX(fbId) from FbStreamObject");
-		Long last = (Long) query.getSingleResult();
-		return last != null ? last : 0;
+	private static Date getLastEntry() {
+		Query query = JPA.em().createQuery("select MAX(created) from FbStreamObject");
+		Date last = (Date) query.getSingleResult();
+		return last;
 	}
 }

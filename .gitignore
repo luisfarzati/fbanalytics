@@ -2,3 +2,4 @@ eclipse
 .settings
 .project
 tmp
+conf/application.conf
