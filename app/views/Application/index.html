@@ -1,0 +1,17 @@
+#{extends 'main.html' /}
+#{set title:'NFSuck' /}
+
+#{fbg.script /}
+
+<div>Logueate con la cuenta de Facebook cuyo activity stream querés extraer</div>
+<div><fb:login-button perms="read_stream" size="large" onlogin="facebookLogin();"></fb:login-button></div>
+
+<script type="text/javascript">
+	function facebookLogin() {
+		FB.getLoginStatus(function(response) {
+			if(response.session) {
+				window.location = "@{Application.stream()}";
+			}
+		});
+	}
+</script>

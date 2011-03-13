@@ -1,0 +1,103 @@
+#{extends 'main.html' /}
+#{set title:'Stream - NFSuck' /}
+
+<div>Activity stream de {user.name}</div>
+<ul>
+	<li>Total: {account.streamTotal}</li>
+	<li>Nuevos: {account.streamNew} <a href="#" onclick="updateStream();">update</a></li>
+</ul>
+
+<div id="stream" style="float:left;width:320px;height:200px"></div>
+<div id="top"><ol id="list"></ol></div>
+
+<script type="text/javascript">
+	$.getJSON('/application/overallAnalytics', function(result) {
+		var dates = {};
+		var apps = {};
+		
+		for(var i in result.data) {
+			var item = result.data[i];
+			
+			if(dates[item.date] == undefined) {
+				dates[item.date] = item.n;
+			} else {
+				dates[item.date] += item.n;
+			}
+			
+			if(apps[item.appName] == undefined) {
+				apps[item.appName] = { "id": item.appId, "n": item.n };
+			} else {
+				apps[item.appName].n += item.n;
+			}
+		} 
+		
+		var s = [];
+		for(p in dates) {
+			s.push(dates[p]);
+		}
+		var e = extendedEncode(s, 400);
+		
+		var url = "https://chart.googleapis.com/chart?cht=lc&chs=320x200&chd="+e+"&chxt=x";
+						
+		$('<img>', { src: url }).appendTo('#stream');
+		
+		s = [];
+		for(a in apps) {
+			s.push({appName:a,appId:apps[a].appId,n:apps[a].n});
+		}
+		var top = 1;
+		for(x in s.sort(function(a,b) { return b.n-a.n })) {
+			$('<li>', { html: s[x].appName + ' (' + s[x].n + ')' }).appendTo('#list');
+			if(top++ >= 10) break;
+		}
+	});
+	
+	var simpleEncoding = 
+	  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	
+	// This function scales the submitted values so that
+	// maxVal becomes the highest value.
+	function simpleEncode(valueArray,maxValue) {
+	  var chartData = ['s:'];
+	  for (var i = 0; i < valueArray.length; i++) {
+	    var currentValue = valueArray[i];
+	    if (!isNaN(currentValue) && currentValue >= 0) {
+	    chartData.push(simpleEncoding.charAt(Math.round((simpleEncoding.length-1) * 
+	      currentValue / maxValue)));
+	    }
+	      else {
+	      chartData.push('_');
+	      }
+	  }
+	  return chartData.join('');
+	}
+	
+	// Same as simple encoding, but for extended encoding.
+	var EXTENDED_MAP=
+	  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.';
+	var EXTENDED_MAP_LENGTH = EXTENDED_MAP.length;
+	function extendedEncode(arrVals, maxVal) {
+	  var chartData = 'e:';
+	
+	  for(i = 0, len = arrVals.length; i < len; i++) {
+	    // In case the array vals were translated to strings.
+	    var numericVal = new Number(arrVals[i]);
+	    // Scale the value to maxVal.
+	    var scaledVal = Math.floor(EXTENDED_MAP_LENGTH * 
+	        EXTENDED_MAP_LENGTH * numericVal / maxVal);
+	
+	    if(scaledVal > (EXTENDED_MAP_LENGTH * EXTENDED_MAP_LENGTH) - 1) {
+	      chartData += "..";
+	    } else if (scaledVal < 0) {
+	      chartData += '__';
+	    } else {
+	      // Calculate first and second digits and add them to the output.
+	      var quotient = Math.floor(scaledVal / EXTENDED_MAP_LENGTH);
+	      var remainder = scaledVal - EXTENDED_MAP_LENGTH * quotient;
+	      chartData += EXTENDED_MAP.charAt(quotient) + EXTENDED_MAP.charAt(remainder);
+	    }
+	  }
+	
+	  return chartData;
+	}	
+</script>
