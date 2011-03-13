@@ -4,3 +4,10 @@ A simple web application to retrieve your Fb activity stream and get basic stats
 
 * posts per day
 * posts per app
+
+Instructions:
+1- rename application.conf-sample to application.conf
+2- edit application.conf and:
+     set your Fb app id and secret key
+     set database configuration values as well
+3- try it out! :)
