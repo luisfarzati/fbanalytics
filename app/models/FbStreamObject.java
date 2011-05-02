@@ -1,3 +1,5 @@
+/*
+
 package models;
 
 import java.util.*;
@@ -10,9 +12,9 @@ import com.google.gson.*;
 public class FbStreamObject extends Model {
 	public Date created;
 	public long fbId;
-	public long userId;
-	public long appId;
-	public String appName;
+	public User author;
+	public User user;
+	public Application application;
 	public String type;
 	
 	@Column(columnDefinition="TEXT")
@@ -40,11 +42,16 @@ public class FbStreamObject extends Model {
 
 	private static final DateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
+	public FbStreamObject(JsonObject json, long userId) throws ParseException {
+		this(json);
+		this.userId = userId;
+	}
+	
 	public FbStreamObject(JsonObject json) throws ParseException {
 		String id = json.get("id").getAsString();
 		this.fbId = Long.parseLong(id.substring(id.indexOf('_')+1));
 		this.created = iso8601.parse(json.get("created_time").getAsString());
-		this.userId = json.get("from").getAsJsonObject().get("id").getAsLong();
+		this.fromId = json.get("from").getAsJsonObject().get("id").getAsLong();
 
 		if(json.has("application") && json.get("application").isJsonObject()) {
 			this.appId = json.get("application").getAsJsonObject().get("id").getAsLong();
@@ -93,3 +100,6 @@ public class FbStreamObject extends Model {
 		}
 	}
 }
+
+ * 
+ */

@@ -4,7 +4,7 @@
 #{fbg.script /}
 
 <div>Logueate con la cuenta de Facebook cuyo activity stream querés extraer</div>
-<div><fb:login-button perms="read_stream" size="large" onlogin="facebookLogin();"></fb:login-button></div>
+<div><fb:login-button perms="read_stream,offline_access" size="large" onlogin="facebookLogin();"></fb:login-button></div>
 
 <script type="text/javascript">
 	function facebookLogin() {

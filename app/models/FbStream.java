@@ -1,3 +1,5 @@
+/*
+
 package models;
 
 import java.util.*;
@@ -9,7 +11,7 @@ import play.modules.facebook.*;
 
 public class FbStream {
 	@SuppressWarnings("deprecation")
-	public static void update() throws FbGraphException, ParseException {
+	public static void update() throws FbGraphException {
 		JsonObject stream = FbGraph.getObject("me/home");
 		Date lastEntry = getLastEntry();
 		if(lastEntry == null) lastEntry = new GregorianCalendar(2011, 1, 1).getTime();
@@ -17,30 +19,39 @@ public class FbStream {
 		System.out.println("last: " + lastEntry.toString());
 
 		Boolean nextPageNeeded = true;
-		
-		while(nextPageNeeded) {
-			for(JsonElement element : stream.get("data").getAsJsonArray()) {
-				JsonObject entry = element.getAsJsonObject();
-				
-//				if(entry.has("application") && entry.get("application").isJsonObject()) {
+	
+		try {
+			while(nextPageNeeded) {
+				for(JsonElement element : stream.get("data").getAsJsonArray()) {
+					JsonObject entry = element.getAsJsonObject();
 					FbStreamObject obj = new FbStreamObject(entry);
+					System.out.println("entry: " + obj.created.toString() + " (" + obj.appName + ")");
 					if(obj.created.before(lastEntry)) {
-						System.out.println("entry: " + obj.created.toString() + " < " + lastEntry.toString() + "; finishing");
+						System.out.println("finishing");
 						nextPageNeeded = false;
 						break;
 					}
 					obj.create();
-//				}
-			}
-
-			if(nextPageNeeded) {
-				if(nextPageNeeded = stream.has("paging")) { 
-					String until = stream.get("paging").getAsJsonObject().get("next").getAsString();
-					until = until.substring(until.lastIndexOf('=')+1);
-					System.out.println("next >> "+until);
-					stream = FbGraph.getObject("me/home", play.modules.facebook.Parameter.with("limit", "25").and("until", until).parameters());
+				}
+	
+				if(nextPageNeeded) {
+					if(nextPageNeeded = stream.has("paging")) { 
+						String until = stream.get("paging").getAsJsonObject().get("next").getAsString();
+						until = until.substring(until.lastIndexOf('=')+1);
+						System.out.println("next >> "+until);
+						stream = FbGraph.getObject("me/home", play.modules.facebook.Parameter.with("limit", "25").and("until", until).parameters());
+					}
 				}
 			}
+		}
+		catch(FbGraphException fe) {
+			System.out.println("*** FbGraphException");
+		}
+		catch(ParseException pe) {
+			System.out.println("*** ParseException");
+		}
+		catch(Exception e) {
+			System.out.println("*** Exception");
 		}
 		
 		System.out.println("finished");
@@ -52,3 +63,6 @@ public class FbStream {
 		return last;
 	}
 }
+
+ * 
+ */

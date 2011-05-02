@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="views/**" kind="src" path="app"/>
+	<classpathentry excluding="views/**|models/FbStream.java|models/FbStreamObject.java" kind="src" path="app"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="fbgraph-0.1"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
@@ -60,6 +60,5 @@
 	<classpathentry kind="lib" path="/home/luis/Projects/play/framework/lib/slf4j-api-1.6.1.jar"/>
 	<classpathentry kind="lib" path="/home/luis/Projects/play/framework/lib/c3p0-0.9.1.2.jar"/>
 	<classpathentry kind="lib" path="/home/luis/Projects/play/framework/lib/javax.inject-1.0.jar"/>
-	
 	<classpathentry kind="output" path="eclipse/classes"/>
 </classpath>
